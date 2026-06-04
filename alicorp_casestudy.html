@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clientes Alicorp — Ursula Yupanqui</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --violet: #5215FC;
+    --violet-light: #8A57FD;
+    --violet-pale: #EDE8FF;
+    --violet-dark: #2C0A9E;
+    --violet-deep: #160550;
+    --cream: #FAFAF7;
+    --ink: #1A1A1A;
+    --ink-soft: #4A4A4A;
+    --ink-muted: #888;
+    --border: rgba(82,21,252,0.12);
+    --white: #fff;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--cream);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(250,250,247,0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.1rem;
+    color: var(--ink);
+    text-decoration: none;
+    letter-spacing: -0.01em;
+  }
+  .nav-back {
+    display: flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 400;
+    color: var(--ink-soft);
+    text-decoration: none;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--violet); }
+
+  /* HERO */
+  .case-hero {
+    min-height: 80vh;
+    background: var(--violet-deep);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .case-hero::before {
+    content: '';
+    position: absolute;
+    bottom: -20%; right: -5%;
+    width: 60vw; height: 60vw;
+    background: radial-gradient(circle, rgba(82,21,252,0.3) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .case-hero-inner { position: relative; z-index: 1; max-width: 780px; }
+  .case-hero-label {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 1.5rem;
+  }
+  .case-hero-label span { color: var(--violet-light); }
+  .case-hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: #fff;
+    margin-bottom: 1.5rem;
+  }
+  .case-hero h1 em { font-style: italic; color: var(--violet-light); }
+  .case-hero-desc {
+    font-size: 1.05rem;
+    color: rgba(255,255,255,0.65);
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 2.5rem;
+  }
+  .case-meta { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+  .meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+  .meta-label {
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+  }
+  .meta-value { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+
+  /* HERO IMAGE */
+  .case-hero-img {
+    width: 100%;
+    max-height: 520px;
+    object-fit: cover;
+    object-position: top;
+    display: block;
+  }
+
+  /* CONTENT */
+  .case-content {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 5rem 2rem;
+  }
+
+  .section-num {
+    display: inline-flex; align-items: center; gap: 0.75rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.75rem;
+  }
+  .section-num::before {
+    content: '';
+    display: block;
+    width: 24px; height: 1px;
+    background: var(--violet);
+  }
+
+  h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(1.8rem, 3vw, 2.6rem);
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 1.5rem;
+  }
+  h3 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.3rem;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 0.75rem;
+    margin-top: 2.5rem;
+  }
+  p {
+    font-size: 1rem;
+    color: var(--ink-soft);
+    line-height: 1.8;
+    margin-bottom: 1.2rem;
+  }
+
+  .divider {
+    width: 100%; height: 1px;
+    background: var(--border);
+    margin: 4rem 0;
+  }
+
+  /* OVERVIEW GRID */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2.5rem 0;
+  }
+  .overview-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+  .overview-card h4 {
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.75rem;
+  }
+  .overview-card p { font-size: 0.9rem; color: var(--ink-soft); line-height: 1.7; margin: 0; }
+
+  /* PROCESS */
+  .process-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    overflow: hidden;
+    margin: 2rem 0 3rem;
+  }
+  .process-step { background: var(--white); padding: 1.5rem 1.25rem; }
+  .process-step-num {
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.5rem;
+    display: block;
+  }
+  .process-step-name { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-bottom: 0.6rem; line-height: 1.3; }
+  .process-step ul { list-style: none; padding: 0; margin: 0; }
+  .process-step ul li {
+    font-size: 0.78rem;
+    color: var(--ink-muted);
+    line-height: 1.6;
+    padding-left: 0.75rem;
+    position: relative;
+  }
+  .process-step ul li::before { content: '·'; position: absolute; left: 0; color: var(--violet); }
+
+  /* PERSONAS */
+  .personas-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .persona-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+  }
+  .persona-icon {
+    width: 48px; height: 48px;
+    background: var(--violet-pale);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1rem;
+  }
+  .persona-icon svg {
+    width: 22px; height: 22px;
+    stroke: var(--violet);
+    stroke-width: 1.5;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .persona-name { font-family: 'DM Serif Display', serif; font-size: 1.1rem; color: var(--ink); margin-bottom: 0.2rem; }
+  .persona-role {
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.75rem;
+  }
+  .persona-quote {
+    font-size: 0.9rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    font-style: italic;
+    border-left: 2px solid var(--violet-pale);
+    padding-left: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  .persona-traits { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+  .trait {
+    font-size: 0.72rem;
+    padding: 0.2rem 0.65rem;
+    border-radius: 100px;
+    background: var(--violet-pale);
+    color: var(--violet-dark);
+  }
+
+  /* FINDINGS */
+  .findings-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .finding-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.75rem;
+    position: relative;
+  }
+  .finding-num {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.5rem;
+    color: var(--violet-pale);
+    line-height: 1;
+    margin-bottom: 0.75rem;
+  }
+  .finding-title { font-size: 0.95rem; font-weight: 500; color: var(--ink); margin-bottom: 0.6rem; }
+  .finding-desc { font-size: 0.85rem; color: var(--ink-soft); line-height: 1.65; margin: 0; }
+
+  /* PAIN POINTS */
+  .pain-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+  .pain-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .pain-title {
+    font-size: 0.8rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--violet);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .pain-card ul { list-style: none; padding: 0; margin: 0; }
+  .pain-card ul li {
+    font-size: 0.83rem;
+    color: var(--ink-soft);
+    line-height: 1.65;
+    padding: 0.4rem 0 0.4rem 1rem;
+    position: relative;
+    border-bottom: 1px solid rgba(82,21,252,0.05);
+  }
+  .pain-card ul li:last-child { border-bottom: none; }
+  .pain-card ul li::before { content: '→'; position: absolute; left: 0; color: var(--violet); font-size: 0.75rem; }
+
+  /* USER FLOW */
+  .flow-box {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin: 2rem 0;
+    overflow-x: auto;
+  }
+  .flow-row {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    margin-bottom: 0.75rem;
+    flex-wrap: nowrap;
+    min-width: max-content;
+  }
+  .flow-step {
+    background: var(--violet-pale);
+    color: var(--violet-dark);
+    font-size: 0.72rem;
+    font-weight: 500;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .flow-step.start { background: var(--violet); color: #fff; }
+  .flow-step.end { background: var(--violet-dark); color: #fff; }
+  .flow-arrow {
+    color: var(--ink-muted);
+    font-size: 0.75rem;
+    padding: 0 0.4rem;
+  }
+
+  /* SCREENS */
+  .screens-img {
+    width: 100%;
+    border-radius: 16px;
+    border: 1px solid var(--border);
+    display: block;
+    margin: 2rem 0;
+  }
+
+  /* TESTING FINDINGS */
+  .test-findings {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  /* THANK YOU */
+  .thanks {
+    background: var(--violet-deep);
+    border-radius: 20px;
+    padding: 4rem;
+    text-align: center;
+    margin: 4rem 0 0;
+  }
+  .thanks h2 { color: #fff; margin-bottom: 0.75rem; }
+  .thanks p { color: rgba(255,255,255,0.6); margin-bottom: 2rem; }
+  .thanks-links { display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap; }
+  .thanks-link {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: rgba(255,255,255,0.7);
+    text-decoration: none;
+    border: 1px solid rgba(255,255,255,0.15);
+    padding: 0.65rem 1.5rem;
+    border-radius: 100px;
+    transition: all 0.2s;
+  }
+  .thanks-link:hover { background: rgba(255,255,255,0.08); color: #fff; border-color: rgba(255,255,255,0.3); }
+  .thanks-link.primary { background: var(--violet); border-color: var(--violet); color: #fff; }
+  .thanks-link.primary:hover { background: var(--violet-light); }
+
+  .back-to-portfolio {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    font-size: 0.82rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--violet);
+    text-decoration: none;
+    margin-bottom: 3rem;
+    transition: gap 0.2s;
+  }
+  .back-to-portfolio:hover { gap: 0.8rem; }
+
+  footer {
+    padding: 1.5rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p { font-size: 0.78rem; color: var(--ink-muted); }
+
+  @media (max-width: 768px) {
+    nav { padding: 1rem 1.5rem; }
+    .case-hero { padding: 7rem 1.5rem 3rem; }
+    .case-content { padding: 3rem 1.5rem; }
+    .overview-grid, .findings-grid, .pain-grid, .test-findings { grid-template-columns: 1fr; }
+    .personas-grid { grid-template-columns: 1fr; }
+    .process-row { grid-template-columns: 1fr 1fr; }
+    footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; }
+    .thanks { padding: 2.5rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Ursula Yupanqui</a>
+  <a class="nav-back" href="index.html">← Back to work</a>
+</nav>
+
+<!-- HERO -->
+<div class="case-hero">
+  <div class="case-hero-inner">
+    <div class="case-hero-label">Case Study · <span>B2B · FMCG · Alicorp</span></div>
+    <h1>Clientes<br><em>Alicorp</em></h1>
+    <p class="case-hero-desc">
+      Sales management website for authorized Alicorp retailers — redesigning a portal that only 14 out of 2,000 users were actually using.
+    </p>
+    <div class="case-meta">
+      <div class="meta-item">
+        <span class="meta-label">My role</span>
+        <span class="meta-value">UX Analyst</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Duration</span>
+        <span class="meta-value">Dec 2018 – Jun 2019</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Industry</span>
+        <span class="meta-value">FMCG · B2B · Peru</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Platform</span>
+        <span class="meta-value">Web Portal</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<img class="case-hero-img" src="thumb_alicorp.png" alt="Alicorp portal final design">
+
+<!-- CONTENT -->
+<div class="case-content">
+
+  <a class="back-to-portfolio" href="index.html">← Back to portfolio</a>
+
+  <!-- 01 PROJECT OVERVIEW -->
+  <span class="section-num">01</span>
+  <h2>Project Overview</h2>
+
+  <div class="overview-grid">
+    <div class="overview-card">
+      <h4>The Company</h4>
+      <p>Alicorp is the largest Peruvian consumer goods company, with operations across South America. It exports to more than 23 countries and manages over 125 leading brands in consumer goods, industrial products, and animal nutrition.</p>
+    </div>
+    <div class="overview-card">
+      <h4>The Goal</h4>
+      <p>Increase 2% on annual digital sales and have 55% of regular customers adopt the website as their primary purchase and commercial management channel.</p>
+    </div>
+    <div class="overview-card">
+      <h4>The Problem</h4>
+      <p>In 2016, Alicorp launched a reseller website to review stock and order products. Two years later, only 14 out of approximately 2,000 resellers were using it monthly.</p>
+    </div>
+  </div>
+
+  <p>As a UX Analyst, I was in charge of understanding users' behavior to propose substantial improvements. I led user research, prototyping, testing, and demo reviews for the full project.</p>
+
+  <div class="divider"></div>
+
+  <!-- DESIGN PROCESS -->
+  <span class="section-num">Design Process</span>
+  <h2>How I approached it</h2>
+
+  <div class="process-row">
+    <div class="process-step">
+      <span class="process-step-num">01</span>
+      <div class="process-step-name">Discovery</div>
+      <ul>
+        <li>Kick off meeting</li>
+        <li>Desk research</li>
+        <li>Proto-persona</li>
+      </ul>
+    </div>
+    <div class="process-step">
+      <span class="process-step-num">02</span>
+      <div class="process-step-name">User Research</div>
+      <ul>
+        <li>User interviews</li>
+        <li>Usability testing</li>
+        <li>Personas</li>
+        <li>Customer Journey Map</li>
+        <li>UX Backlog</li>
+      </ul>
+    </div>
+    <div class="process-step">
+      <span class="process-step-num">03</span>
+      <div class="process-step-name">Ideation</div>
+      <ul>
+        <li>Competitors analysis</li>
+        <li>Ideation workshop</li>
+        <li>User flow</li>
+      </ul>
+    </div>
+    <div class="process-step">
+      <span class="process-step-num">04</span>
+      <div class="process-step-name">Prototyping</div>
+      <ul>
+        <li>Wireframing</li>
+        <li>Hi-fi prototype</li>
+      </ul>
+    </div>
+    <div class="process-step">
+      <span class="process-step-num">05</span>
+      <div class="process-step-name">Testing</div>
+      <ul>
+        <li>Moderated testing</li>
+        <li>Improvements</li>
+        <li>Retest</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 02 PRODUCT STRATEGY -->
+  <span class="section-num">02</span>
+  <h2>Product Strategy</h2>
+
+  <h3>User Personas</h3>
+  <div class="personas-grid">
+    <div class="persona-card">
+      <div class="persona-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/><path d="M12 11v4M10 15h4"/></svg>
+      </div>
+      <div class="persona-name">Maria</div>
+      <div class="persona-role">The Founder</div>
+      <p class="persona-quote">"If using the website I can confirm the products I'm buying, I will use it."</p>
+      <div class="persona-traits">
+        <span class="trait">Will adapt if necessary</span>
+        <span class="trait">Work is her life</span>
+        <span class="trait">Does things quickly</span>
+        <span class="trait">Makes decisions empirically</span>
+      </div>
+    </div>
+    <div class="persona-card">
+      <div class="persona-icon">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="7" r="4"/><path d="M4 21v-1a8 8 0 0 1 16 0v1"/><path d="M9 12l2 2 4-4"/></svg>
+      </div>
+      <div class="persona-name">Fiorella</div>
+      <div class="persona-role">The New Generation</div>
+      <p class="persona-quote">"I want to do it by my own, without needing the approval of the seller — all automated is the best."</p>
+      <div class="persona-traits">
+        <span class="trait">Looks for independence</span>
+        <span class="trait">Prefers technology</span>
+        <span class="trait">Does things efficiently</span>
+        <span class="trait">Makes informed decisions</span>
+      </div>
+    </div>
+  </div>
+
+  <h3>Key Findings from Research</h3>
+  <div class="findings-grid">
+    <div class="finding-card">
+      <div class="finding-num">01</div>
+      <div class="finding-title">Trust</div>
+      <p class="finding-desc">Users need to trust the information the website provides — updated stock data, products, and discounts. They also need to receive exactly what they ordered.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">02</div>
+      <div class="finding-title">Usability</div>
+      <p class="finding-desc">Users need to find what they're looking for quickly. Discounts must be visible and easy to find. The interface should mirror familiar ERP and Excel-like interfaces.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">03</div>
+      <div class="finding-title">Independence</div>
+      <p class="finding-desc">Even though they like talking with sales reps, users need the freedom and independence to buy what they want without external approvals.</p>
+    </div>
+  </div>
+
+  <h3>Prioritizing Pain Points</h3>
+  <div class="pain-grid">
+    <div class="pain-card">
+      <div class="pain-title">Choose what I want to buy</div>
+      <ul>
+        <li>Excel file drag and drop on the website</li>
+        <li>Powered search bar with SKU and description options</li>
+        <li>Show recommendations based on monthly discounts</li>
+      </ul>
+    </div>
+    <div class="pain-card">
+      <div class="pain-title">Sales rep approves order</div>
+      <ul>
+        <li>Automate stock validation at website</li>
+        <li>Automate load of credit from previous orders</li>
+      </ul>
+    </div>
+    <div class="pain-card">
+      <div class="pain-title">I receive exactly what I ordered</div>
+      <ul>
+        <li>Track delivery and amount of products</li>
+        <li>Inform changes while tracking with notifications</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>User Flow</h3>
+  <div class="flow-box">
+    <div class="flow-row">
+      <span class="flow-step start">Login</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Home</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Search</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Add to cart</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Paying</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step end">Confirmation</span>
+    </div>
+    <div class="flow-row">
+      <span class="flow-step start">Login</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Discounts</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Order from discounts</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Add to cart</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step end">Confirmation</span>
+    </div>
+    <div class="flow-row">
+      <span class="flow-step start">Login</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Tracking</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Active orders</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">See timeline</span>
+    </div>
+    <div class="flow-row">
+      <span class="flow-step start">Login</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Buying record</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step">Previous orders</span>
+      <span class="flow-arrow">→</span>
+      <span class="flow-step end">Re-order</span>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- 03 UI DESIGN -->
+  <span class="section-num">03</span>
+  <h2>UI Design</h2>
+
+  <h3>Testing Findings</h3>
+  <div class="test-findings findings-grid">
+    <div class="finding-card">
+      <div class="finding-num">01</div>
+      <div class="finding-title">Love Desktop</div>
+      <p class="finding-desc">Users mostly use and prefer desktop devices to purchase and manage business operations. Even small businesses have a desktop and a little office in their stores.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">02</div>
+      <div class="finding-title">Excel-ish UI</div>
+      <p class="finding-desc">Small business users manage purchases via Excel files. The interface needed to mirror familiar spreadsheet-like patterns for faster adoption.</p>
+    </div>
+    <div class="finding-card">
+      <div class="finding-num">03</div>
+      <div class="finding-title">Same Order Every Month</div>
+      <p class="finding-desc">Resellers reuse previous orders with minimal changes. A re-order flow based on purchase history became a core feature of the final design.</p>
+    </div>
+  </div>
+
+  <h3>Final Design</h3>
+  <p>The redesigned portal incorporated a powerful search bar with SKU lookup, a discount discovery section, automated stock validation, and an order tracking timeline — all built around the mental models resellers already had from Excel and ERP tools.</p>
+
+  <img class="screens-img" src="alicorp_ux_case.png" alt="Alicorp portal full case study screens">
+
+  <div class="divider"></div>
+
+  <div class="thanks">
+    <h2>Thank you!</h2>
+    <p>Want to work together? I'm open to hybrid product roles where research and design live side by side.</p>
+    <div class="thanks-links">
+      <a class="thanks-link primary" href="mailto:eyupanquic@gmail.com">Say hello →</a>
+      <a class="thanks-link" href="https://www.linkedin.com/in/ursulayupanquic" target="_blank">LinkedIn</a>
+      <a class="thanks-link" href="index.html">← Back to portfolio</a>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>© 2026 Ursula Yupanqui — Product Designer & UX Researcher</p>
+  <p>Lima, Peru 🇵🇪</p>
+</footer>
+
+</body>
+</html>
