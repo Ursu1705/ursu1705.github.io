@@ -1,0 +1,1128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Financial Privacy UX — Case Study</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --royal: #001291;
+  --blue-light: #85C8FF;
+  --white: #FFFFFF;
+  --ink: #0a0e2a;
+  --ink-2: #1a1f4a;
+  --muted: #6b7280;
+  --border: rgba(0,18,145,0.08);
+  --card-bg: rgba(255,255,255,0.7);
+  --section-gap: 140px;
+  --radius: 16px;
+  --radius-sm: 8px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: #FAFAF7;
+  color: var(--ink);
+  overflow-x: hidden;
+  line-height: 1.6;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--blue-light); border-radius: 2px; }
+
+/* ── STICKY NAV ── */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 20px 48px;
+  backdrop-filter: blur(20px) saturate(180%);
+  background: rgba(255,255,255,0.88);
+  border-bottom: 1px solid var(--border);
+  transition: padding 0.3s;
+}
+nav.scrolled { padding: 14px 48px; }
+.nav-logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.1rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-logo:hover { color: var(--royal); }
+.nav-links {
+  display: flex; gap: 36px; list-style: none;
+}
+.nav-links a {
+  font-size: 0.8rem; font-weight: 400; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--muted); text-decoration: none; transition: color 0.2s;
+}
+.nav-links a:hover, .nav-links a.active { color: var(--royal); }
+.progress-bar {
+  position: fixed; top: 0; left: 0; height: 2px; z-index: 200;
+  background: linear-gradient(90deg, var(--royal), var(--blue-light));
+  width: 0%; transition: width 0.1s linear;
+}
+
+/* ── SIDE NAV ── */
+.side-nav {
+  position: fixed; left: 28px; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 14px; z-index: 90;
+}
+.side-dot {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--border); border: 1.5px solid var(--border);
+  transition: all 0.3s; cursor: pointer;
+}
+.side-dot.active { background: var(--royal); border-color: var(--royal); transform: scale(1.4); }
+
+/* ── HERO ── */
+.hero {
+  min-height: 80vh;
+  background: var(--ink);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 8rem 4rem 4rem;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  bottom: -20%; right: -5%;
+  width: 60vw; height: 60vw;
+  background: radial-gradient(circle, rgba(0,18,145,0.35) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+.hero-inner { position: relative; z-index: 1; max-width: 780px; }
+.hero-label {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-bottom: 1.5rem;
+}
+.hero-label span { color: var(--blue-light); }
+.hero h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2.8rem, 6vw, 5rem);
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: #fff;
+  margin-bottom: 1.5rem;
+}
+.hero h1 em { font-style: italic; color: var(--blue-light); }
+.hero-desc {
+  font-size: 1.05rem;
+  color: rgba(255,255,255,0.65);
+  max-width: 560px;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+}
+.hero-meta { display: flex; gap: 2.5rem; flex-wrap: wrap; }
+.meta-item { display: flex; flex-direction: column; gap: 0.2rem; }
+.meta-label {
+  font-size: 0.68rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+.meta-value { font-size: 0.9rem; color: rgba(255,255,255,0.85); }
+
+/* ── SECTIONS BASE ── */
+section { padding: 5rem 4rem; max-width: 1100px; margin: 0 auto; }
+
+/* ── OVERVIEW ── */
+.overview { background: #f8f9ff; max-width: 100%; margin: 0; padding: 5rem 4rem; }
+.section-label {
+  font-size: 0.72rem; font-weight: 500; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--royal); opacity: 0.6; margin-bottom: 16px; display: block;
+}
+.section-title {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.15;
+  letter-spacing: -0.02em; color: var(--ink); margin-bottom: 64px;
+}
+.overview-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+.ov-card {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 36px 32px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.ov-card:hover { transform: translateY(-4px); box-shadow: 0 20px 60px rgba(0,18,145,0.07); }
+.ov-icon {
+  width: 44px; height: 44px; border-radius: 10px;
+  background: linear-gradient(135deg, rgba(0,18,145,0.06), rgba(133,200,255,0.1));
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 24px;
+}
+.ov-icon svg { stroke: var(--royal); }
+.ov-label { font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+.ov-text { font-size: 0.95rem; line-height: 1.65; color: var(--ink-2); font-weight: 300; }
+.ov-text strong { font-weight: 500; color: var(--ink); }
+
+/* timeline */
+.timeline {
+  margin-top: 80px; display: flex; gap: 0; position: relative;
+}
+.timeline::before {
+  content: ''; position: absolute; top: 20px; left: 20px; right: 20px; height: 1px;
+  background: linear-gradient(90deg, var(--royal) 0%, var(--blue-light) 100%);
+}
+.tl-item {
+  flex: 1; padding-top: 52px; padding-right: 24px; position: relative;
+}
+.tl-dot {
+  position: absolute; top: 12px; left: 0; width: 16px; height: 16px;
+  border-radius: 50%; background: var(--royal);
+  border: 3px solid #f8f9ff;
+  box-shadow: 0 0 0 2px var(--royal);
+}
+.tl-year { font-size: 0.7rem; letter-spacing: 0.1em; color: var(--royal); margin-bottom: 8px; font-weight: 500; }
+.tl-role { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.tl-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.5; font-weight: 300; }
+
+/* ── PROCESS ── */
+.process { background: var(--white); }
+.process-flow {
+  display: flex; align-items: flex-start; gap: 0; margin-top: 48px;
+  position: relative;
+}
+.process-flow::before {
+  content: ''; position: absolute; top: 36px; left: 36px; right: 36px; height: 1px;
+  background: var(--border);
+}
+.proc-step {
+  flex: 1; display: flex; flex-direction: column; align-items: center;
+  text-align: center; padding: 0 16px; position: relative; cursor: default;
+}
+.proc-num {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: var(--white); border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: var(--royal);
+  position: relative; z-index: 1; margin-bottom: 24px;
+  transition: all 0.3s;
+}
+.proc-step:hover .proc-num {
+  background: var(--royal); color: #fff; border-color: var(--royal);
+  transform: scale(1.1); box-shadow: 0 12px 30px rgba(0,18,145,0.25);
+}
+.proc-title { font-size: 0.85rem; font-weight: 500; color: var(--ink); margin-bottom: 8px; }
+.proc-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.5; font-weight: 300; }
+
+/* ── METHODOLOGY ── */
+.methodology { background: #f8f9ff; }
+.method-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: start; }
+.participants-visual {
+  background: var(--royal); border-radius: 24px; padding: 48px;
+  color: #fff; position: relative; overflow: hidden;
+}
+.participants-visual::before {
+  content: ''; position: absolute;
+  top: -80px; right: -80px; width: 300px; height: 300px;
+  background: radial-gradient(circle, rgba(133,200,255,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.pv-stat { margin-bottom: 36px; }
+.pv-number {
+  font-family: 'DM Serif Display', serif; font-size: 3.5rem; line-height: 1;
+  color: var(--blue-light); margin-bottom: 8px;
+}
+.pv-label { font-size: 0.8rem; color: rgba(255,255,255,0.6); letter-spacing: 0.06em; }
+.pv-divider { width: 40px; height: 1px; background: rgba(255,255,255,0.15); margin: 28px 0; }
+.pv-demo { margin-top: 36px; }
+.demo-bar { margin-bottom: 16px; }
+.demo-label { display: flex; justify-content: space-between; font-size: 0.75rem; margin-bottom: 6px; color: rgba(255,255,255,0.7); }
+.bar-track { height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px; overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 2px; background: var(--blue-light); }
+
+.method-list { display: flex; flex-direction: column; gap: 24px; }
+.method-item {
+  padding: 28px; border: 1px solid var(--border); border-radius: var(--radius);
+  background: #fff; transition: all 0.3s;
+}
+.method-item:hover { border-color: var(--royal); box-shadow: 0 8px 30px rgba(0,18,145,0.06); }
+.mi-num { font-family: 'DM Serif Display', serif; font-size: 2rem; color: rgba(0,18,145,0.1); line-height: 1; margin-bottom: 8px; }
+.mi-title { font-size: 0.9rem; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.mi-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.6; font-weight: 300; }
+
+/* ── FLOW ── */
+.flow-section { background: var(--white); }
+.flow-grid {
+  display: flex; gap: 24px; overflow-x: auto; padding-bottom: 24px;
+  scrollbar-width: none; margin-top: 48px;
+}
+.flow-grid::-webkit-scrollbar { display: none; }
+.flow-phone {
+  flex-shrink: 0; width: 200px; border-radius: 32px;
+  background: var(--ink); border: 1px solid rgba(255,255,255,0.06);
+  box-shadow: 0 24px 64px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.06);
+  overflow: hidden; position: relative;
+  transition: transform 0.3s;
+}
+.flow-phone:hover { transform: translateY(-8px); }
+.fp-notch {
+  height: 28px; background: rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: center;
+}
+.notch-bar { width: 60px; height: 4px; background: #111; border-radius: 2px; }
+.fp-content { padding: 16px; min-height: 340px; }
+.fp-label-top { font-size: 0.6rem; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 12px; }
+.fp-title { font-size: 0.9rem; font-weight: 500; color: #fff; margin-bottom: 20px; }
+.fp-step-label {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, var(--royal), transparent);
+  padding: 24px 16px 16px; font-size: 0.7rem; color: rgba(255,255,255,0.7);
+  font-weight: 500; letter-spacing: 0.06em;
+}
+.fp-product {
+  background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px; padding: 12px; margin-bottom: 8px;
+}
+.fp-product-name { font-size: 0.65rem; color: rgba(255,255,255,0.5); margin-bottom: 4px; }
+.fp-product-val { font-size: 0.8rem; color: #fff; font-weight: 500; }
+.fp-eye-modal {
+  background: rgba(133,200,255,0.08); border: 1px solid rgba(133,200,255,0.2);
+  border-radius: 12px; padding: 16px; margin-top: 16px;
+}
+.fp-eye-modal p { font-size: 0.65rem; color: rgba(255,255,255,0.6); line-height: 1.5; }
+.fp-eye-modal .modal-cta {
+  margin-top: 12px; background: var(--blue-light); color: var(--royal);
+  font-size: 0.65rem; font-weight: 600; border-radius: 6px; padding: 8px;
+  text-align: center; cursor: pointer;
+}
+.fp-hidden {
+  display: flex; flex-direction: column; gap: 8px; margin-top: 12px;
+}
+.hidden-item {
+  background: rgba(255,255,255,0.03); border: 1px dashed rgba(255,255,255,0.1);
+  border-radius: 8px; padding: 12px;
+  display: flex; align-items: center; gap: 8px;
+}
+.hidden-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(133,200,255,0.4); }
+.hidden-label { font-size: 0.6rem; color: rgba(255,255,255,0.3); }
+
+/* ── INSIGHTS ── */
+.insights { background: var(--ink); }
+.insights .section-label { color: var(--blue-light); opacity: 1; }
+.insights .section-title { color: #fff; }
+.insight-blocks { display: flex; flex-direction: column; gap: 2px; margin-top: 64px; }
+.insight-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; min-height: 380px;
+  border-radius: var(--radius); overflow: hidden; margin-bottom: 24px;
+}
+.insight-block.reverse { direction: rtl; }
+.insight-block.reverse > * { direction: ltr; }
+.insight-text {
+  padding: 64px 56px; background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.06);
+  display: flex; flex-direction: column; justify-content: center;
+}
+.insight-num {
+  font-family: 'DM Serif Display', serif; font-size: 5rem; line-height: 1;
+  color: rgba(133,200,255,0.12); margin-bottom: 24px;
+}
+.insight-title {
+  font-family: 'DM Serif Display', serif; font-size: 1.7rem; line-height: 1.2;
+  color: #fff; margin-bottom: 20px; letter-spacing: -0.02em;
+}
+.insight-quote {
+  font-size: 0.92rem; color: var(--blue-light); font-weight: 300;
+  font-style: italic; line-height: 1.65; margin-bottom: 20px;
+  padding-left: 16px; border-left: 2px solid rgba(133,200,255,0.3);
+}
+.insight-body { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.7; font-weight: 300; }
+.insight-impl {
+  margin-top: 20px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.06);
+}
+.impl-label { font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-light); opacity: 0.7; margin-bottom: 8px; }
+.impl-text { font-size: 0.85rem; color: rgba(255,255,255,0.7); font-weight: 400; }
+
+.insight-visual {
+  background: linear-gradient(135deg, rgba(0,18,145,0.8), rgba(133,200,255,0.15));
+  border: 1px solid rgba(255,255,255,0.04);
+  display: flex; align-items: center; justify-content: center; padding: 48px;
+  position: relative; overflow: hidden;
+}
+.insight-visual::before {
+  content: ''; position: absolute; inset: 0;
+  background: radial-gradient(ellipse 80% 80% at 50% 50%, rgba(133,200,255,0.08) 0%, transparent 70%);
+}
+.iv-icon { position: relative; z-index: 1; }
+.iv-icon svg { width: 80px; height: 80px; stroke: rgba(133,200,255,0.5); stroke-width: 1; }
+
+/* ── POLARITIES ── */
+.polarities { background: #f8f9ff; }
+.polarity-wrap { display: grid; grid-template-columns: 1fr 48px 1fr; gap: 0; margin-top: 64px; align-items: start; }
+.polarity-center { display: flex; flex-direction: column; align-items: center; gap: 64px; padding-top: 28px; }
+.polarity-vs { font-family: 'DM Serif Display', serif; font-size: 0.9rem; color: var(--muted); font-style: italic; }
+.polarity-col { display: flex; flex-direction: column; gap: 24px; }
+.pol-card {
+  border-radius: var(--radius); padding: 28px 32px;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+.pol-card:hover { transform: translateY(-4px); box-shadow: 0 16px 48px rgba(0,18,145,0.08); }
+.pol-card.young { background: var(--royal); }
+.pol-card.old { background: var(--white); border: 1px solid var(--border); }
+.pc-label { font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+.pol-card.young .pc-label { color: rgba(133,200,255,0.7); }
+.pol-card.old .pc-label { color: var(--muted); }
+.pc-value { font-size: 1.15rem; font-weight: 500; }
+.pol-card.young .pc-value { color: #fff; }
+.pol-card.old .pc-value { color: var(--ink); }
+.pc-desc { font-size: 0.82rem; font-weight: 300; margin-top: 8px; line-height: 1.5; }
+.pol-card.young .pc-desc { color: rgba(255,255,255,0.55); }
+.pol-card.old .pc-desc { color: var(--muted); }
+.pol-header {
+  font-family: 'DM Serif Display', serif; font-size: 1.3rem;
+  margin-bottom: 28px; letter-spacing: -0.01em;
+}
+.young-header { color: var(--royal); }
+.old-header { color: var(--ink); }
+
+/* ── STRATEGIC ── */
+.strategic {
+  background: var(--ink);
+  position: relative; overflow: hidden;
+}
+.strategic::before {
+  content: ''; position: absolute;
+  top: -300px; left: 50%; transform: translateX(-50%);
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(133,200,255,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.strategic .section-label { color: var(--blue-light); opacity: 1; }
+.strategic .section-title { color: #fff; }
+.strategic-grid { display: grid; grid-template-columns: repeat(2,1fr); gap: 1px; background: rgba(255,255,255,0.05); margin-top: 64px; }
+.str-item {
+  background: var(--ink); padding: 56px 48px;
+  position: relative; overflow: hidden; transition: background 0.3s;
+}
+.str-item:hover { background: rgba(255,255,255,0.02); }
+.str-num {
+  font-family: 'DM Serif Display', serif; font-size: 6rem; line-height: 1;
+  color: rgba(133,200,255,0.05); position: absolute; bottom: 16px; right: 24px;
+}
+.str-title {
+  font-family: 'DM Serif Display', serif; font-size: 1.6rem; color: #fff;
+  margin-bottom: 16px; letter-spacing: -0.02em;
+}
+.str-body { font-size: 0.9rem; color: rgba(255,255,255,0.45); line-height: 1.7; font-weight: 300; max-width: 360px; }
+.str-accent { color: var(--blue-light); }
+
+/* ── RECOMMENDATIONS ── */
+.recommendations { background: var(--white); }
+.rec-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); gap: 24px; margin-top: 64px; }
+.rec-card {
+  border: 1px solid var(--border); border-radius: 20px; padding: 40px 32px;
+  position: relative; overflow: hidden; transition: all 0.4s; cursor: default;
+}
+.rec-card::before {
+  content: ''; position: absolute; inset: 0; border-radius: 20px;
+  background: linear-gradient(135deg, var(--royal), #0020cc);
+  opacity: 0; transition: opacity 0.4s;
+}
+.rec-card:hover::before { opacity: 1; }
+.rec-card:hover .rc-label { color: rgba(255,255,255,0.6); }
+.rec-card:hover .rc-title { color: #fff; }
+.rec-card:hover .rc-body { color: rgba(255,255,255,0.55); }
+.rec-card:hover .rc-icon svg { stroke: rgba(133,200,255,0.8); }
+.rc-icon { margin-bottom: 24px; position: relative; z-index: 1; }
+.rc-icon svg { stroke: var(--royal); transition: stroke 0.4s; }
+.rc-label { font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; position: relative; z-index: 1; transition: color 0.4s; }
+.rc-title { font-size: 1.1rem; font-weight: 500; color: var(--ink); margin-bottom: 12px; position: relative; z-index: 1; transition: color 0.4s; }
+.rc-body { font-size: 0.85rem; color: var(--muted); line-height: 1.6; font-weight: 300; position: relative; z-index: 1; transition: color 0.4s; }
+
+/* ── IMPACT ── */
+.impact { background: linear-gradient(160deg, #f8f9ff 0%, #eef4ff 100%); }
+.impact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 80px; align-items: center; }
+.impact-stats { display: flex; flex-direction: column; gap: 40px; }
+.is-item { display: flex; flex-direction: column; gap: 6px; }
+.is-number {
+  font-family: 'DM Serif Display', serif; font-size: 3.5rem; color: var(--royal);
+  line-height: 1; letter-spacing: -0.03em;
+}
+.is-label { font-size: 0.85rem; color: var(--muted); font-weight: 300; }
+.impact-text { }
+.it-quote {
+  font-family: 'DM Serif Display', serif; font-size: 1.6rem; line-height: 1.4;
+  color: var(--ink); font-style: italic; letter-spacing: -0.02em;
+  margin-bottom: 32px;
+}
+.it-body { font-size: 0.92rem; color: var(--muted); line-height: 1.7; font-weight: 300; }
+.it-final {
+  margin-top: 48px; padding: 40px; border-radius: 16px;
+  background: var(--royal); color: rgba(255,255,255,0.8);
+  font-family: 'DM Serif Display', serif; font-size: 1.15rem; font-style: italic;
+  line-height: 1.6; letter-spacing: -0.01em;
+  position: relative; overflow: hidden;
+}
+.it-final::before {
+  content: '\201C'; font-size: 8rem; line-height: 1; color: rgba(133,200,255,0.1);
+  position: absolute; top: -20px; left: 20px; font-family: serif;
+}
+.it-final span { color: var(--blue-light); }
+
+/* ── FOOTER ── */
+footer {
+  padding: 1.5rem 4rem;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: var(--white);
+}
+footer p { font-size: 0.78rem; color: var(--muted); }
+
+/* ── ANIMATIONS ── */
+.reveal {
+  opacity: 0; transform: translateY(32px);
+  transition: opacity 0.8s cubic-bezier(0.16,1,0.3,1), transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 1024px) {
+  section { padding: 3.5rem 2rem; }
+  nav { padding: 1rem 1.5rem; }
+  .hero { padding: 7rem 1.5rem 3rem; }
+  .side-nav { display: none; }
+  .insight-block { grid-template-columns: 1fr; }
+  .insight-block.reverse { direction: ltr; }
+  .method-grid { grid-template-columns: 1fr; }
+  .polarity-wrap { grid-template-columns: 1fr; }
+  .polarity-center { flex-direction: row; padding: 0; }
+  .strategic-grid { grid-template-columns: 1fr; }
+  .impact-grid { grid-template-columns: 1fr; }
+  footer { padding: 1.5rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+}
+@media (max-width: 640px) {
+  .nav-links { display: none; }
+  .timeline { flex-direction: column; }
+  .timeline::before { display: none; }
+  .process-flow { flex-direction: column; align-items: flex-start; }
+  .process-flow::before { display: none; }
+  .hero-meta { flex-direction: column; gap: 1rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- SIDE NAV -->
+<div class="side-nav" id="sideNav">
+  <div class="side-dot active" onclick="scrollTo('hero')" title="Hero"></div>
+  <div class="side-dot" onclick="scrollTo('overview')" title="Overview"></div>
+  <div class="side-dot" onclick="scrollTo('process')" title="Process"></div>
+  <div class="side-dot" onclick="scrollTo('methodology')" title="Methodology"></div>
+  <div class="side-dot" onclick="scrollTo('flow')" title="Flow"></div>
+  <div class="side-dot" onclick="scrollTo('insights')" title="Insights"></div>
+  <div class="side-dot" onclick="scrollTo('polarities')" title="Polarities"></div>
+  <div class="side-dot" onclick="scrollTo('strategic')" title="Strategic"></div>
+  <div class="side-dot" onclick="scrollTo('recommendations')" title="Recs"></div>
+  <div class="side-dot" onclick="scrollTo('impact')" title="Impact"></div>
+</div>
+
+<!-- NAVIGATION -->
+<nav id="mainNav">
+  <a class="nav-logo" href="index.html">Ursula Yupanqui</a>
+  <ul class="nav-links">
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#process">Process</a></li>
+    <li><a href="#insights">Insights</a></li>
+    <li><a href="#recommendations">Recommendations</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-inner">
+    <div class="hero-label">Case Study · <span>UX Research · BBVA Perú</span></div>
+    <h1>Designing Financial<br><em>Privacy</em> for<br>High-Value Users</h1>
+    <p class="hero-desc">
+      A UX research case study exploring trust, security perception, and behavioral patterns in digital banking — how users understand, feel about, and control the visibility of their financial products.
+    </p>
+    <div class="hero-meta">
+      <div class="meta-item">
+        <span class="meta-label">My role</span>
+        <span class="meta-value">Senior UX Researcher</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Scope</span>
+        <span class="meta-value">Research · Synthesis · Strategy</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Participants</span>
+        <span class="meta-value">18 HNW users</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Client</span>
+        <span class="meta-value">BBVA Perú</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- OVERVIEW -->
+<section class="overview" id="overview">
+  <span class="section-label">01 — Project Overview</span>
+  <h2 class="section-title">Context, Challenge<br>& Research Goals</h2>
+
+  <div class="overview-grid">
+    <div class="ov-card reveal">
+      <div class="ov-icon">
+        <svg width="20" height="20" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+      </div>
+      <div class="ov-label">Context</div>
+      <p class="ov-text">BBVA Perú sought to improve its mobile banking dashboard for <strong>high-net-worth individuals</strong> who frequently access banking in semi-public or sensitive environments.</p>
+    </div>
+    <div class="ov-card reveal reveal-delay-1">
+      <div class="ov-icon">
+        <svg width="20" height="20" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="ov-label">Challenge</div>
+      <p class="ov-text">Users needed a way to <strong>control the visibility</strong> of financial products without compromising trust or creating cognitive friction in their daily banking flow.</p>
+    </div>
+    <div class="ov-card reveal reveal-delay-2">
+      <div class="ov-icon">
+        <svg width="20" height="20" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      </div>
+      <div class="ov-label">Business Problem</div>
+      <p class="ov-text">Feature adoption was low despite clear user need. The mental models around <strong>hiding vs. deleting</strong> financial products were causing hesitation and abandonment.</p>
+    </div>
+    <div class="ov-card reveal reveal-delay-3">
+      <div class="ov-icon">
+        <svg width="20" height="20" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M6 20v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+      </div>
+      <div class="ov-label">My Role</div>
+      <p class="ov-text"><strong>Senior UX Researcher</strong> — led stakeholder alignment, research design, moderated usability sessions, synthesis, and strategic recommendations.</p>
+    </div>
+    <div class="ov-card reveal reveal-delay-4">
+      <div class="ov-icon">
+        <svg width="20" height="20" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+      <div class="ov-label">Research Goals</div>
+      <p class="ov-text">Understand <strong>privacy perceptions</strong>, map interaction expectations, and identify friction points in the visibility-toggle feature flow.</p>
+    </div>
+  </div>
+
+  <div class="timeline reveal">
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Week 1–2</div>
+      <div class="tl-role">Stakeholder Alignment</div>
+      <div class="tl-desc">Defined scope, KPIs, and research questions with product and design leads</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Week 3–4</div>
+      <div class="tl-role">Participant Recruitment</div>
+      <div class="tl-desc">Screened and recruited 18 HNW segment participants across age groups</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Week 5–7</div>
+      <div class="tl-role">Moderated Sessions</div>
+      <div class="tl-desc">Conducted concept testing and usability sessions with think-aloud protocol</div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot"></div>
+      <div class="tl-year">Week 8–10</div>
+      <div class="tl-role">Synthesis & Delivery</div>
+      <div class="tl-desc">Affinity mapping, insight clustering, and strategic recommendation framework</div>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process" id="process">
+  <span class="section-label">02 — Research Process</span>
+  <h2 class="section-title">How the Research<br>Was Conducted</h2>
+
+  <div class="process-flow">
+    <div class="proc-step reveal">
+      <div class="proc-num">1</div>
+      <div class="proc-title">Stakeholder Alignment</div>
+      <div class="proc-desc">Defined hypotheses, research questions, and success metrics collaboratively</div>
+    </div>
+    <div class="proc-step reveal reveal-delay-1">
+      <div class="proc-num">2</div>
+      <div class="proc-title">Interview Planning</div>
+      <div class="proc-desc">Designed discussion guides, screener criteria, and session structure</div>
+    </div>
+    <div class="proc-step reveal reveal-delay-2">
+      <div class="proc-num">3</div>
+      <div class="proc-title">Prototype Testing</div>
+      <div class="proc-desc">Created interactive Figma prototypes covering all key flows and states</div>
+    </div>
+    <div class="proc-step reveal reveal-delay-3">
+      <div class="proc-num">4</div>
+      <div class="proc-title">Moderated Sessions</div>
+      <div class="proc-desc">18 sessions, 60 min each, remote and in-person, think-aloud protocol</div>
+    </div>
+    <div class="proc-step reveal reveal-delay-4">
+      <div class="proc-num">5</div>
+      <div class="proc-title">Insight Synthesis</div>
+      <div class="proc-desc">Affinity mapping, behavioral pattern analysis, severity scoring</div>
+    </div>
+    <div class="proc-step reveal">
+      <div class="proc-num">6</div>
+      <div class="proc-title">Recommendations</div>
+      <div class="proc-desc">Strategic and tactical design recommendations delivered to product team</div>
+    </div>
+  </div>
+</section>
+
+<!-- METHODOLOGY -->
+<section class="methodology" id="methodology">
+  <span class="section-label">03 — Participants & Methodology</span>
+  <h2 class="section-title">Who We Studied<br>& How</h2>
+
+  <div class="method-grid">
+    <div class="participants-visual reveal">
+      <div class="pv-stat">
+        <div class="pv-number">18</div>
+        <div class="pv-label">Participants</div>
+      </div>
+      <div class="pv-divider"></div>
+      <div class="pv-demo">
+        <div class="demo-bar">
+          <div class="demo-label"><span>Ages 28–40</span><span>55%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:55%"></div></div>
+        </div>
+        <div class="demo-bar">
+          <div class="demo-label"><span>Ages 41–60</span><span>45%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:45%"></div></div>
+        </div>
+        <div class="demo-bar">
+          <div class="demo-label"><span>High Net Worth</span><span>100%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:100%"></div></div>
+        </div>
+        <div class="demo-bar">
+          <div class="demo-label"><span>Active Mobile Users</span><span>89%</span></div>
+          <div class="bar-track"><div class="bar-fill" style="width:89%"></div></div>
+        </div>
+      </div>
+      <div class="pv-divider"></div>
+      <div class="pv-stat">
+        <div class="pv-number">60<span style="font-size:2rem">min</span></div>
+        <div class="pv-label">Avg. session length</div>
+      </div>
+    </div>
+
+    <div class="method-list">
+      <div class="method-item reveal">
+        <div class="mi-num">01</div>
+        <div class="mi-title">Think-Aloud Protocol</div>
+        <div class="mi-desc">Participants narrated their thoughts in real time as they navigated the prototype, revealing hidden mental models and decision-making patterns around financial visibility.</div>
+      </div>
+      <div class="method-item reveal reveal-delay-1">
+        <div class="mi-num">02</div>
+        <div class="mi-title">Concept Testing</div>
+        <div class="mi-desc">Presented three design concepts for the visibility toggle to assess comprehension, trust perception, and preference across different user segments.</div>
+      </div>
+      <div class="method-item reveal reveal-delay-2">
+        <div class="mi-num">03</div>
+        <div class="mi-title">Moderated Usability Sessions</div>
+        <div class="mi-desc">Task-based sessions with predefined scenarios simulating real banking contexts — in public spaces, during meetings, and at home — to capture contextual behavior.</div>
+      </div>
+      <div class="method-item reveal reveal-delay-3">
+        <div class="mi-num">04</div>
+        <div class="mi-title">Post-Session Interview</div>
+        <div class="mi-desc">Semi-structured interviews after each session to explore trust, security associations, and underlying emotional responses to the privacy feature.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOW -->
+<section class="flow-section" id="flow">
+  <span class="section-label">04 — Experience Flow</span>
+  <h2 class="section-title">The Journey Through<br>Privacy Controls</h2>
+
+  <img src="journeyscreens_bbva.png" alt="The Journey Through Privacy Controls — BBVA" style="width:100%; border-radius:16px; margin-top:2.5rem; display:block;">
+</section>
+
+<!-- INSIGHTS -->
+<section class="insights" id="insights">
+  <span class="section-label">05 — Key Insights</span>
+  <h2 class="section-title">What Users<br>Revealed</h2>
+
+  <div class="insight-blocks">
+
+    <!-- Insight 1 -->
+    <div class="insight-block reveal">
+      <div class="insight-text">
+        <div class="insight-num">01</div>
+        <div class="insight-title">Users Expected Direct Interaction from Product Cards</div>
+        <p class="insight-quote">"I would just tap the card itself — there must be something there. Why would I have to go somewhere else?"</p>
+        <p class="insight-body">Participants consistently attempted to long-press or swipe product cards directly, bypassing menu-based access points. The card itself was perceived as the natural locus of control.</p>
+        <div class="insight-impl">
+          <div class="impl-label">UX Implication</div>
+          <div class="impl-text">Embed contextual actions directly within product card interactions rather than routing through secondary menus.</div>
+        </div>
+      </div>
+      <div class="insight-visual">
+        <div class="iv-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="10" y="20" width="60" height="40" rx="8" stroke-width="1"/>
+            <rect x="18" y="30" width="30" height="4" rx="2"/>
+            <rect x="18" y="38" width="20" height="3" rx="1.5"/>
+            <circle cx="58" cy="36" r="6"/>
+            <path d="M55 36l2 2 4-4"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight 2 -->
+    <div class="insight-block reverse reveal">
+      <div class="insight-text">
+        <div class="insight-num">02</div>
+        <div class="insight-title">Privacy Was Interpreted as Security</div>
+        <p class="insight-quote">"Hiding means it's protected, right? Like, no one can access it — not even if they steal my phone."</p>
+        <p class="insight-body">Users conflated visual privacy with cryptographic security. Many believed hiding a product also restricted unauthorized access, revealing a critical mental model gap that could undermine trust.</p>
+        <div class="insight-impl">
+          <div class="impl-label">UX Implication</div>
+          <div class="impl-text">Clearly communicate what "hiding" does and does not do. Distinguish between visibility control and security protection.</div>
+        </div>
+      </div>
+      <div class="insight-visual">
+        <div class="iv-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M40 15 L58 25 L58 42 C58 54 40 65 40 65 C40 65 22 54 22 42 L22 25 Z" stroke-width="1"/>
+            <circle cx="40" cy="38" r="8" stroke-width="1"/>
+            <path d="M40 30 L40 38 L46 38"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight 3 -->
+    <div class="insight-block reveal">
+      <div class="insight-text">
+        <div class="insight-num">03</div>
+        <div class="insight-title">The Eye Icon Was Universally Recognized</div>
+        <p class="insight-quote">"The eye — that means show or hide. Everyone knows that. I've seen it everywhere, it's obvious."</p>
+        <p class="insight-body">Across all age groups and digital literacy levels, the eye icon was immediately understood as a visibility control. This was the feature's strongest affordance signal and should be amplified.</p>
+        <div class="insight-impl">
+          <div class="impl-label">UX Implication</div>
+          <div class="impl-text">Center the eye icon as the primary visual metaphor for the feature — increase its prominence across all entry points and states.</div>
+        </div>
+      </div>
+      <div class="insight-visual">
+        <div class="iv-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M10 40 C10 40 22 20 40 20 C58 20 70 40 70 40 C70 40 58 60 40 60 C22 60 10 40 10 40Z" stroke-width="1"/>
+            <circle cx="40" cy="40" r="10" stroke-width="1"/>
+            <circle cx="40" cy="40" r="4" fill="rgba(133,200,255,0.3)" stroke-width="0"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight 4 -->
+    <div class="insight-block reverse reveal">
+      <div class="insight-text">
+        <div class="insight-num">04</div>
+        <div class="insight-title">Long Onboarding Text Was Ignored</div>
+        <p class="insight-quote">"I don't read those explanations. If I need to read to understand, something is already wrong."</p>
+        <p class="insight-body">Modal copy explaining the feature was systematically skipped by all participant segments. Users relied entirely on iconography, visual cues, and button labels to form their understanding.</p>
+        <div class="insight-impl">
+          <div class="impl-label">UX Implication</div>
+          <div class="impl-text">Replace explanatory text with progressive disclosure, visual demonstrations, and micro-copy embedded in the UI state itself.</div>
+        </div>
+      </div>
+      <div class="insight-visual">
+        <div class="iv-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="20" y="20" width="40" height="50" rx="4" stroke-width="1"/>
+            <line x1="28" y1="32" x2="52" y2="32" stroke-width="1.5"/>
+            <line x1="28" y1="40" x2="52" y2="40" stroke-width="1"/>
+            <line x1="28" y1="48" x2="44" y2="48" stroke-width="1"/>
+            <line x1="30" y1="58" x2="50" y2="58" stroke-width="0.5" stroke-dasharray="2 2"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insight 5 -->
+    <div class="insight-block reveal">
+      <div class="insight-text">
+        <div class="insight-num">05</div>
+        <div class="insight-title">Trust Depended on Biometric & Security Signals</div>
+        <p class="insight-quote">"If it asks me for my fingerprint before hiding something, I know it's serious. That makes me feel safe."</p>
+        <p class="insight-body">Participants in older segments especially required authentication signals (fingerprint, PIN) to feel confident that a sensitive action was being properly executed and protected.</p>
+        <div class="insight-impl">
+          <div class="impl-label">UX Implication</div>
+          <div class="impl-text">Offer optional biometric confirmation for the hide action, especially for older user segments, as a trust-building mechanism.</div>
+        </div>
+      </div>
+      <div class="insight-visual">
+        <div class="iv-icon">
+          <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="28" y="12" width="24" height="16" rx="3" stroke-width="1"/>
+            <rect x="20" y="28" width="40" height="36" rx="6" stroke-width="1"/>
+            <circle cx="40" cy="44" r="6" stroke-width="1"/>
+            <line x1="40" y1="50" x2="40" y2="54" stroke-width="1.5"/>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- POLARITIES -->
+<section class="polarities" id="polarities">
+  <span class="section-label">06 — Behavioral Polarities</span>
+  <h2 class="section-title">Two Worlds,<br>One Feature</h2>
+
+  <div class="polarity-wrap">
+    <div class="polarity-col">
+      <div class="pol-header young-header">Younger Users (28–40)</div>
+      <div class="pol-card young reveal">
+        <div class="pc-label">Speed</div>
+        <div class="pc-value">Frictionless & Fast</div>
+        <div class="pc-desc">Minimal confirmation needed. Trust the system, just make it work.</div>
+      </div>
+      <div class="pol-card young reveal reveal-delay-1">
+        <div class="pc-label">Interaction</div>
+        <div class="pc-value">Simplicity First</div>
+        <div class="pc-desc">Expect familiar patterns; one tap should accomplish the goal.</div>
+      </div>
+      <div class="pol-card young reveal reveal-delay-2">
+        <div class="pc-label">Privacy Mode</div>
+        <div class="pc-value">Discreet by Default</div>
+        <div class="pc-desc">Hide without ceremony — don't make it feel like a big deal.</div>
+      </div>
+      <div class="pol-card young reveal reveal-delay-3">
+        <div class="pc-label">Trust Signal</div>
+        <div class="pc-value">Implicit Trust</div>
+        <div class="pc-desc">Previous experience with the brand is enough. No need for repeated validation.</div>
+      </div>
+    </div>
+
+    <div class="polarity-center">
+      <div class="polarity-vs">vs</div>
+      <div class="polarity-vs">vs</div>
+      <div class="polarity-vs">vs</div>
+      <div class="polarity-vs">vs</div>
+    </div>
+
+    <div class="polarity-col">
+      <div class="pol-header old-header">Older Users (41–60)</div>
+      <div class="pol-card old reveal">
+        <div class="pc-label">Speed</div>
+        <div class="pc-value">Reassurance First</div>
+        <div class="pc-desc">Need confirmation at each step. Would rather be slow and certain.</div>
+      </div>
+      <div class="pol-card old reveal reveal-delay-1">
+        <div class="pc-label">Interaction</div>
+        <div class="pc-value">Guided Experience</div>
+        <div class="pc-desc">Appreciate explanations and clear consequences before committing.</div>
+      </div>
+      <div class="pol-card old reveal reveal-delay-2">
+        <div class="pc-label">Privacy Mode</div>
+        <div class="pc-value">Explicit Confirmation</div>
+        <div class="pc-desc">Want to know exactly what changed and why, with a visible audit trail.</div>
+      </div>
+      <div class="pol-card old reveal reveal-delay-3">
+        <div class="pc-label">Trust Signal</div>
+        <div class="pc-value">Biometric Validation</div>
+        <div class="pc-desc">Fingerprint or PIN confirmation makes the action feel secure and intentional.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STRATEGIC -->
+<section class="strategic" id="strategic">
+  <span class="section-label">07 — Strategic Insights</span>
+  <h2 class="section-title">What This Means<br>for the Product</h2>
+
+  <div class="strategic-grid">
+    <div class="str-item reveal">
+      <div class="str-num">01</div>
+      <div class="str-title">Financial Privacy is <span class="str-accent">Contextual</span></div>
+      <p class="str-body">Users don't think about privacy in the abstract. They think about specific moments — a shared screen, a spouse nearby, a colleague on a video call. Design for those moments, not for a universal state.</p>
+    </div>
+    <div class="str-item reveal reveal-delay-1">
+      <div class="str-num">02</div>
+      <div class="str-title">Trust is <span class="str-accent">Emotional</span></div>
+      <p class="str-body">Functional correctness isn't enough. Users need to feel safe before they act. Every touchpoint in the visibility flow is an opportunity to build or break emotional confidence in the bank.</p>
+    </div>
+    <div class="str-item reveal reveal-delay-2">
+      <div class="str-num">03</div>
+      <div class="str-title">Control Drives <span class="str-accent">Adoption</span></div>
+      <p class="str-body">Users who felt a strong sense of agency over what they showed and hid were more likely to use the feature regularly. Perceived control is the primary adoption driver — not discoverability.</p>
+    </div>
+    <div class="str-item reveal reveal-delay-3">
+      <div class="str-num">04</div>
+      <div class="str-title">Security Perception <span class="str-accent">Matters</span></div>
+      <p class="str-body">The gap between what hiding does functionally and what users believe it does is a liability. Close this gap proactively or it will erode trust when users eventually discover the difference.</p>
+    </div>
+  </div>
+</section>
+
+<!-- RECOMMENDATIONS -->
+<section class="recommendations" id="recommendations">
+  <span class="section-label">08 — Recommendations</span>
+  <h2 class="section-title">Design Actions<br>to Take</h2>
+
+  <div class="rec-grid">
+    <div class="rec-card reveal">
+      <div class="rc-icon">
+        <svg width="24" height="24" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+      </div>
+      <div class="rc-label">Priority 1</div>
+      <div class="rc-title">Improve Discoverability</div>
+      <p class="rc-body">Surface the hide/show interaction directly on product cards via long-press or a contextual icon. Remove dependence on nested menus or settings pages.</p>
+    </div>
+    <div class="rec-card reveal reveal-delay-1">
+      <div class="rc-icon">
+        <svg width="24" height="24" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      </div>
+      <div class="rc-label">Priority 2</div>
+      <div class="rc-title">Simplify Communication</div>
+      <p class="rc-body">Replace long modal copy with a 3-second animated visual demonstration of what hiding a product does. Show, don't tell.</p>
+    </div>
+    <div class="rec-card reveal reveal-delay-2">
+      <div class="rc-icon">
+        <svg width="24" height="24" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+      </div>
+      <div class="rc-label">Priority 3</div>
+      <div class="rc-title">Create Adaptive Experiences</div>
+      <p class="rc-body">Offer two interaction modes: a streamlined flow for younger users and a guided, confirmation-heavy flow for older segments. Let users set their preference.</p>
+    </div>
+    <div class="rec-card reveal reveal-delay-3">
+      <div class="rc-icon">
+        <svg width="24" height="24" fill="none" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+      </div>
+      <div class="rc-label">Priority 4</div>
+      <div class="rc-title">Clarify Operational Consequences</div>
+      <p class="rc-body">Explicitly communicate that hiding is a display preference, not a security action. Use a persistent micro-label that differentiates visibility from access control.</p>
+    </div>
+  </div>
+</section>
+
+<!-- IMPACT -->
+<section class="impact" id="impact">
+  <span class="section-label">09 — Impact & Reflection</span>
+  <h2 class="section-title">What This Research<br>Changed</h2>
+
+  <div class="impact-grid">
+    <div class="impact-stats">
+      <div class="is-item reveal">
+        <div class="is-number">18</div>
+        <div class="is-label">Research sessions conducted across two user segments</div>
+      </div>
+      <div class="is-item reveal reveal-delay-1">
+        <div class="is-number">5</div>
+        <div class="is-label">Critical design pivots directly informed by user insights</div>
+      </div>
+      <div class="is-item reveal reveal-delay-2">
+        <div class="is-number">3</div>
+        <div class="is-label">Strategic roadmap recommendations adopted by product leadership</div>
+      </div>
+      <div class="is-item reveal reveal-delay-3">
+        <div class="is-number">100%</div>
+        <div class="is-label">Of stakeholders aligned on adaptive experience framework</div>
+      </div>
+    </div>
+
+    <div class="impact-text reveal">
+      <p class="it-quote">"Research that began as a usability study became a strategic lens on how trust is built — and broken — in digital banking."</p>
+      <p class="it-body">The findings reframed how the product team thought about the feature. Rather than optimizing a UI flow, they were now designing a trust experience. This shift influenced not just the visibility toggle, but the broader approach to sensitive interactions across the BBVA Perú mobile platform.</p>
+      <div class="it-final">
+        In financial experiences, users don't just need usability — they need to feel <span>protected.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 Ursula Yupanqui — Product Designer & UX Researcher</p>
+  <p>Lima, Peru</p>
+</footer>
+
+<script>
+// Progress Bar
+window.addEventListener('scroll', () => {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const progress = (scrollTop / docHeight) * 100;
+  document.getElementById('progressBar').style.width = progress + '%';
+
+  // Nav scroll class
+  const nav = document.getElementById('mainNav');
+  nav.classList.toggle('scrolled', scrollTop > 50);
+
+  // Side nav active state
+  const sections = document.querySelectorAll('section, footer');
+  const dots = document.querySelectorAll('.side-dot');
+  let current = 0;
+  sections.forEach((s, i) => {
+    if (window.scrollY >= s.offsetTop - 200) current = Math.min(i, dots.length - 1);
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === current));
+
+  // Reveal
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+});
+
+// Scroll to section
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
+}
+
+// Smooth active nav links
+document.querySelectorAll('.nav-links a').forEach(link => {
+  link.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// Initial reveal check
+setTimeout(() => {
+  document.querySelectorAll('.reveal').forEach(el => {
+    if (el.getBoundingClientRect().top < window.innerHeight * 0.88) {
+      el.classList.add('visible');
+    }
+  });
+}, 100);
+</script>
+</body>
+</html>
